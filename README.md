@@ -54,3 +54,37 @@ Output:
 
 1. Open n8n
 2. Import the workflow file:
+3. Configure credentials:
+- Google Gemini API
+- Google Calendar OAuth
+4. Activate the workflow
+5. Send a chat message with a reminder request
+
+---
+
+## Key Features
+
+- Natural language reminder creation
+- Relative date handling
+- Automatic Google Calendar scheduling
+- Clean and modular workflow design
+- Practical LLM usage in automation
+
+---
+
+## Future Improvements
+
+- Conflict detection for overlapping events
+- Automatic rescheduling
+- Multi-user support
+- Notifications via email or messaging apps
+- Logging and error monitoring
+
+---
+
+## Author
+
+Aditya Gavhane  
+Final-year B.Tech (AI & Analytics) student  
+Focused on AI automation, LLM systems, and workflow engineering
+
