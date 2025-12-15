@@ -1,9 +1,9 @@
 # AI Reminder Agent
 
-An AI-powered reminder scheduling agent built using n8n, Google Gemini, and Google Calendar.  
-The system converts natural language messages into structured reminders and automatically creates calendar events.
+AI Reminder Agent is an automation workflow built using n8n, Google Gemini, and Google Calendar.
+It converts natural language reminder requests into scheduled Google Calendar events automatically.
 
-This project demonstrates how LLMs can be used in real-world workflow automation instead of toy demos.
+This project demonstrates practical use of LLMs in workflow automation.
 
 ---
 
@@ -14,18 +14,21 @@ This project demonstrates how LLMs can be used in real-world workflow automation
   - Title
   - Date
   - Time
-- Resolves relative dates like:
-  - today
-  - tomorrow
-  - next Friday
-- Automatically creates events in Google Calendar
+- Resolves relative dates such as today, tomorrow, and next Friday
+- Automatically creates Google Calendar events
 - Handles timezone-aware scheduling (Asia/Kolkata)
 
-Example input:
-> Remind me to submit the report tomorrow at 5 PM
+---
 
-Output:
-- A Google Calendar event is created with the correct date and time
+## Example
+
+**User input:**
+
+> Remind me to submit the assignment tomorrow at 6 PM
+
+**Result:**
+
+> A Google Calendar event is created for tomorrow at 6:00 PM with the correct title and timezone.
 
 ---
 
@@ -35,28 +38,25 @@ Output:
 - Google Gemini (LLM for information extraction)
 - Google Calendar API
 - JavaScript (n8n Code node)
-- JSON-based workflow configuration
 
 ---
 
 ## Workflow Overview
 
-1. Chat trigger receives the user message
-2. Google Gemini extracts structured reminder details in JSON format
-3. JavaScript code node:
-   - Validates extracted data
-   - Builds start and end timestamps
-4. Google Calendar node creates the calendar event
+1. A chat trigger receives the user message
+2. Google Gemini extracts structured reminder data in JSON format
+3. A JavaScript code node validates the data and builds timestamps
+4. A Google Calendar node creates the event
 
 ---
 
 ## How to Use
 
 1. Open n8n
-2. Import the workflow file:
+2. Import the workflow JSON file into n8n
 3. Configure credentials:
-- Google Gemini API
-- Google Calendar OAuth
+   - Google Gemini API
+   - Google Calendar OAuth
 4. Activate the workflow
 5. Send a chat message with a reminder request
 
@@ -66,25 +66,33 @@ Output:
 
 - Natural language reminder creation
 - Relative date handling
-- Automatic Google Calendar scheduling
-- Clean and modular workflow design
-- Practical LLM usage in automation
+- Automatic calendar scheduling
+- Clean, modular workflow design
+- Real-world automation use case
+
+---
+
+## Limitations
+
+- No conflict detection for overlapping events
+- Single-user configuration
+- No external notification system
 
 ---
 
 ## Future Improvements
 
-- Conflict detection for overlapping events
-- Automatic rescheduling
+- Conflict detection and rescheduling
 - Multi-user support
-- Notifications via email or messaging apps
-- Logging and error monitoring
+- Notifications via email or messaging platforms
+- Logging and monitoring
 
 ---
 
 ## Author
 
 Aditya Gavhane  
-Final-year B.Tech (AI & Analytics) student  
+Final-year B.Tech student (AI & Analytics)  
 Focused on AI automation, LLM systems, and workflow engineering
+
 
