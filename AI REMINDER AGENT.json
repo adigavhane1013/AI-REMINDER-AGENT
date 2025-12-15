@@ -1,0 +1,156 @@
+{
+  "name": "AI REMINDER AGENT",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are an information extraction system.\n\nToday's date is {{ $now.toISODate() }} and the timezone is Asia/Kolkata.\n\nExtract reminder details from the user message.\nResolve relative dates like \"tomorrow\", \"today\", or \"next Friday\" based on today's date.\n\nReturn ONLY valid JSON in this format:\n{\n  \"title\": \"\",\n  \"date\": \"YYYY-MM-DD\",\n  \"time\": \"HH:MM\",\n  \"timezone\": \"Asia/Kolkata\"\n}\nDo not use markdown or code blocks. Output raw JSON only.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1136,
+        48
+      ],
+      "id": "2b511d4a-095a-4804-8202-a8ab90829ea1",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxOutputTokens": 8192,
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        256
+      ],
+      "id": "a2f1f78a-b243-48c6-a5bf-0b40fcfdc9cb",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kcZjxusNZLe1CqCu",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        928,
+        48
+      ],
+      "id": "6f9aecf3-e74a-40f3-b070-fdf8c68cff92",
+      "name": "When chat message received",
+      "webhookId": "1cf33d67-9e4d-4178-8cf0-bc4651a2a8fa"
+    },
+    {
+      "parameters": {
+        "jsCode": "let data = $json;\n\n// If wrapped inside \"output\"\nif (typeof data.output === 'object') {\n  data = data.output;\n}\n\n// If output is a JSON string\nif (typeof data.output === 'string') {\n  data = JSON.parse(\n    data.output\n      .replace(/```json/g, '')\n      .replace(/```/g, '')\n      .trim()\n  );\n}\n\nconst title = String(data.title).replace(/\\s+/g, ' ').trim();\nconst date = data.date;\nconst time = data.time;\n\nif (!date || !time) {\n  throw new Error('Missing date or time in input');\n}\n\n// Build start datetime\nconst startDateTime = `${date}T${time}:00+05:30`;\n\n// Add 5 minutes safely\nconst [h, m] = time.split(':').map(Number);\nconst endH = h + Math.floor((m + 5) / 60);\nconst endM = (m + 5) % 60;\n\nconst endDateTime =\n  `${date}T${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}:00+05:30`;\n\nreturn {\n  title,\n  startDateTime,\n  endDateTime\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        48
+      ],
+      "id": "c9e4cc34-9d2b-433f-9caf-9f2294c8935c",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "decoders1013@gmail.com",
+          "mode": "list",
+          "cachedResultName": "decoders1013@gmail.com"
+        },
+        "start": "={{ $json.startDateTime }}",
+        "end": "={{ $json.endDateTime }}",
+        "additionalFields": {
+          "summary": "={{ $json.title }}\n"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1808,
+        48
+      ],
+      "id": "4d64675d-61e5-417e-ad26-0b2cba3fda16",
+      "name": "Create an event1",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FF9zQ1bc5GqT22lZ",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Create an event1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "89f60c51-1082-4b8c-a73e-0de5887710e2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "51295f8c9d2c948057d5a4ed47bc72233a6dacf8da84254c3fa0ae93cf4b3423"
+  },
+  "id": "8MuUWkSVKJtWcwoI",
+  "tags": []
+}
